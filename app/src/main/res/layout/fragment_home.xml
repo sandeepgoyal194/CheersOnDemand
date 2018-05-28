@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cheersondemand.view.fragments.FragmentHome">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="190dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+       android:src="@drawable/top_banner" />
+
+        <RelativeLayout
+            android:paddingEnd="30dp"
+            android:paddingStart="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="80dp">
+        <LinearLayout
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+
+                android:textSize="14sp"
+                android:text="@string/location"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+
+                android:textSize="16sp"
+                android:text="@string/select_a_location"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+            <RelativeLayout
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            <ImageView
+                android:layout_alignParentRight="true"
+                android:layout_gravity="end"
+                android:src="@mipmap/ic_launcher"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>
