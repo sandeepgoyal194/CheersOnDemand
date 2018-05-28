@@ -12,7 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.example.universe.villiger.R;
+import in.healthhunt.framework.R;
 
 
 final public class PermissionsUtils {

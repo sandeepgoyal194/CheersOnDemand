@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">CheersOnDemand</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="password">Password</string>
+    <string name="name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="cheers_on_demand">Cheers on Demand</string>
+    <string name="get_started">Get started and discover the \n best offers around you</string>
+    <string name="signup">Sign Up</string>
+    <string name="facebook_app_id">227338774698048</string>
+    <string name="fb_login_protocol_scheme">fb227338774698048</string>
+    <string name="facebook">Facebook</string>
+    <string name="google">Google</string>
+    <string name="agreement">By Signing Up you agree with our</string>
+    <string name="login">Login</string>
+    <string name="log_in">Log In</string>
+
+    <string name="skip_continue"><![CDATA[Skip & Continue]]></string>
+    <string name="term_cond"><![CDATA[Terms & Conditions  & Privacy Policy]]></string>
+    <string name="forgot_password">Forgot Password ?</string>
+    <string name="location">Location</string>
+    <string name="select_a_location">Select  a Location</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <!--
+        <string name="default_web_client_id">999387565226-hdnnhm6rhgik5ljvm06shotsi7j9883c.apps.googleusercontent.com</string>
+    -->
 </resources>
