@@ -18,4 +18,19 @@
     <color name="black_alpha">#D8000000</color>
     <color name="product_add_to_cart_back_color">#F9FAFC</color>
     <color name="product_border_color">#F3F6FD</color>
+    <color name="hint_color">#BDC3CD</color>
+    <color name="btn_disable_color">#DB8F93</color>
+    <color name="edit_text_enable">#505967</color>
+    <color name="error_color">#c61e67</color>
+    <color name="cross_color">#3e454f</color>
+    <color name="brands_back_color">#F6F8FA</color>
+    <color name="profile_text_color">#263a5b</color>
+    <color name="profile_email_color">#94ACC9</color>
+    <color name="edit_button_back_color">#EEF2F6</color>
+    <color name="edit_text_color">#3D5877</color>
+    <color name="profile_back">#f9fbfd</color>
+    <color name="profile_item_text_color">#404A58</color>
+    <color name="profile_updated_text_color">#829CBD</color>
+    <color name="cart_quantity_border_color">#EAF0FB</color>
+
 </resources>

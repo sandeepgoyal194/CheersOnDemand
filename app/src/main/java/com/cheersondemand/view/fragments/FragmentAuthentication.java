@@ -2,10 +2,15 @@ package com.cheersondemand.view.fragments;
 
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +25,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cheersondemand.R;
+import com.cheersondemand.model.AuthenticationResponse;
+import com.cheersondemand.model.LoginRequest;
+import com.cheersondemand.model.SignUpRequest;
+import com.cheersondemand.model.SocialLoginRequest;
+import com.cheersondemand.model.User;
+import com.cheersondemand.presenter.AuthenicationPresenterImpl;
+import com.cheersondemand.presenter.IAutheniticationPresenter;
+import com.cheersondemand.util.C;
 import com.cheersondemand.util.CustomEditText;
 import com.cheersondemand.util.DrawableClickListener;
+import com.cheersondemand.util.SharedPreference;
 import com.cheersondemand.util.Util;
+import com.cheersondemand.view.ActivityHome;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -34,10 +49,13 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -51,16 +69,21 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
+import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static android.text.InputType.TYPE_CLASS_TEXT;
+import static android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentAuthentication extends Fragment implements View.OnClickListener {
+public class FragmentAuthentication extends Fragment implements IAutheniticationPresenter.IAuthenticationView,View.OnClickListener {
 
 
     @BindView(R.id.btnLoginTab)
@@ -82,7 +105,7 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
     @BindView(R.id.etPassword)
     CustomEditText etPassword;
     @BindView(R.id.btnSignUp)
-    Button btnSignUp;
+    CircularProgressButton btnSignUp;
     @BindView(R.id.btnFbLogin)
     Button btnFbLogin;
     @BindView(R.id.btnGoogleLogin)
@@ -96,7 +119,7 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
     @BindView(R.id.etPasswordLogin)
     CustomEditText etPasswordLogin;
     @BindView(R.id.btnLogin)
-    Button btnLogin;
+    CircularProgressButton btnLogin;
     @BindView(R.id.tvForgotPassword)
     TextView tvForgotPassword;
     @BindView(R.id.LLView)
@@ -109,12 +132,22 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
     Button btnFbLoginViewLogin;
     @BindView(R.id.btnGoogleLoginViewLogin)
     Button btnGoogleLoginViewLogin;
+    @BindView(R.id.skip_and_continue)
+    TextView skipAndContinue;
+    @BindView(R.id.skip_and_continue_login)
+    TextView skipAndContinueLogin;
 
     private AccessToken mAccessToken;
     Util util;
     private static final int RC_SIGN_IN = 234;
     GoogleSignInClient mGoogleSignInClient;
     FirebaseAuth mAuth;
+     boolean isPasswordVisibleSignUP=false;
+    String accessToken;
+
+     boolean isPasswordVisibleLogin=false;
+     boolean isLoginScreen=false;
+    IAutheniticationPresenter iAutheniticationPresenter;
     public FragmentAuthentication() {
         // Required empty public constructor
     }
@@ -135,6 +168,10 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
         mGoogleSignInClient = GoogleSignIn.getClient(getApplicationContext(), gso);
 
         util = new Util();
+        iAutheniticationPresenter=new AuthenicationPresenterImpl(this,getActivity());
+
+            isLoginScreen=getArguments().getBoolean(C.IS_LOGIN_SCREEN);
+
     }
 
     @Override
@@ -155,14 +192,31 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
-
+    @Override
+    public void onDestroy() {
+        try {
+            super.onDestroy();
+            iAutheniticationPresenter.onDestroy();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        viewA.setVisibility(View.VISIBLE);
-        viewB.setVisibility(View.GONE);
-        viewSignUp.setVisibility(View.VISIBLE);
-        viewSignIn.setVisibility(View.GONE);
+
+        if(isLoginScreen){
+            viewA.setVisibility(View.GONE);
+            viewB.setVisibility(View.VISIBLE);
+            viewSignUp.setVisibility(View.GONE);
+            viewSignIn.setVisibility(View.VISIBLE);
+        }
+        else {
+            viewA.setVisibility(View.VISIBLE);
+            viewB.setVisibility(View.GONE);
+            viewSignUp.setVisibility(View.VISIBLE);
+            viewSignIn.setVisibility(View.GONE);
+        }
         btnLoginTab.setOnClickListener(this);
         btnSignUpTab.setOnClickListener(this);
         btnSignUpTabLoginView.setOnClickListener(this);
@@ -171,47 +225,25 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
         btnGoogleLoginViewLogin.setOnClickListener(this);
         btnFbLogin.setOnClickListener(this);
         btnGoogleLogin.setOnClickListener(this);
+        skipAndContinue.setOnClickListener(this);
+        skipAndContinueLogin.setOnClickListener(this);
+        btnSignUp.setOnClickListener(this);
+        btnLogin.setOnClickListener(this);
 
         callbackManager = CallbackManager.Factory.create();
         loginButton.setReadPermissions("email");
-        etPassword.setDrawableClickListener(new DrawableClickListener() {
+        initLogin();
+        initSignUp();
 
 
-            public void onClick(DrawablePosition target) {
-                switch (target) {
-                    case RIGHT:
-                        //Do something here
-                        Toast.makeText(getActivity(),"ddd",Toast.LENGTH_LONG).show();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-
-        });
-        etPasswordLogin.setDrawableClickListener(new DrawableClickListener() {
-
-
-            public void onClick(DrawablePosition target) {
-                switch (target) {
-                    case RIGHT:
-                        //Do something here
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-
-        });
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.e("DEBUG", "UserID=" + loginResult.getAccessToken().getUserId() + "Token=" + loginResult.getAccessToken().getToken());
                 mAccessToken = loginResult.getAccessToken();
-                util.setSnackbarMessage(getActivity(), "Login Sucess", LLView);
-                getUserProfile(mAccessToken);
+                util.setSnackbarMessage(getActivity(), "Login Sucess", LLView,false);
+               // getUserProfile(mAccessToken);
+                socailLogin(""+mAccessToken,"facebook");
 
             }
 
@@ -269,28 +301,40 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 //Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
+               final GoogleSignInAccount account = task.getResult(ApiException.class);
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String scope = "oauth2:"+ Scopes.EMAIL+" "+ Scopes.PROFILE;
+                             accessToken = GoogleAuthUtil.getToken(getApplicationContext(), account.getAccount(), scope, new Bundle());
+                            Log.d("DEBUG", "accessToken:"+accessToken); //accessToken:ya29.Gl...
 
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (GoogleAuthException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                AsyncTask.execute(runnable);
                 //authenticating with firebase
-                firebaseAuthWithGoogle(account);
+                firebaseAuthWithGoogle(account,accessToken);
             } catch (ApiException e) {
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        }
-        else {
+        } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
 
         }
     }
 
 
-
-
-
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct, final String token) {
         // Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         //getting the auth credential
+
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
 
         //Now using firebase we are signing in the user here
@@ -300,9 +344,11 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Log.e("DEBUG",user.getDisplayName());
-                            Log.e("DEBUG",user.getEmail());
-                            util.setSnackbarMessage(getActivity(), "Login Sucess", LLView);
+
+                            Log.e("DEBUG", user.getDisplayName());
+                            Log.e("DEBUG", user.getEmail());
+                            util.setSnackbarMessage(getActivity(), "Login Sucess", LLView,false);
+                            socailLogin(token,"google");
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(getApplicationContext(), "Authentication failed.",
@@ -315,6 +361,15 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
     }
 
 
+    void socailLogin(String token,String provider){
+        SocialLoginRequest socialLoginRequest=new SocialLoginRequest();
+        socialLoginRequest.setAccessToken(token);
+        socialLoginRequest.setLoginType(2);
+        socialLoginRequest.setGrantType("password");
+        socialLoginRequest.setProvider(provider);
+        socialLoginRequest.setUuid(Util.id(getActivity()));
+        iAutheniticationPresenter.setSignUpSocail(socialLoginRequest);
+    }
     //this method is called on click
     private void signIn() {
         //getting the google signin intent
@@ -323,6 +378,7 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
         //starting the activity for result
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -333,7 +389,7 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
                 viewB.setVisibility(View.VISIBLE);
                 //   btnLoginTab.animate().translationY(0);
 
-                initAnimation(viewSignUp,btnLoginTabLoginView);
+                initAnimation(viewSignUp, btnLoginTabLoginView);
                 break;
             case R.id.btnSignUpTab:
                 viewSignIn.setVisibility(View.GONE);
@@ -349,7 +405,7 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
                 viewA.setVisibility(View.VISIBLE);
                 viewB.setVisibility(View.GONE);
                 //  initAnimation(viewSignIn,viewSignUp);
-                initAnimationR(viewSignUp,btnSignUpTab);
+                initAnimationR(viewSignUp, btnSignUpTab);
 
                 break;
             case R.id.btnLoginTabLoginView:
@@ -379,21 +435,418 @@ public class FragmentAuthentication extends Fragment implements View.OnClickList
                     signIn();
                 }
                 break;
+            case R.id.skip_and_continue:
+                if (Util.isNetworkConnectivity(getActivity())) {
+                    Intent intent = new Intent(getActivity(), ActivityHome.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    getActivity().startActivity(intent);
+                }
+                break;
+            case R.id.skip_and_continue_login:
+                if (Util.isNetworkConnectivity(getActivity())) {
+                    Intent intent = new Intent(getActivity(), ActivityHome.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    getActivity().startActivity(intent);
+                }
+                break;
+            case R.id.btnSignUp:
+                btnSignUp.startAnimation();
+                SignUpRequest signUpRequest=new SignUpRequest();
+                User user=new User();
+                user.setName(etName.getText().toString());
+                user.setEmail(etEmail.getText().toString());
+                user.setPassword(etPassword.getText().toString());
+                signUpRequest.setUser(user);
+                iAutheniticationPresenter.setSignUp(signUpRequest);
+                break;
+            case R.id.btnLogin:
+                btnLogin.startAnimation();
+                LoginRequest loginRequest=new LoginRequest();
+                loginRequest.setEmail(etEmailLogin.getText().toString());
+                loginRequest.setGrantType("password");
+                loginRequest.setLoginType(1);
+                loginRequest.setUuid(Util.id(getActivity()));
+                loginRequest.setPassword(etPasswordLogin.getText().toString());
+                iAutheniticationPresenter.setLoginUsingEmail(loginRequest);
+                break;
         }
     }
 
-    private void initAnimation( View  viewA, View viewB)
-    {
-        Animation animShow = AnimationUtils.loadAnimation( getActivity(), R.anim.view_show);
+
+    private void initSignUp() {
+        btnSignUp.setEnabled(false);
+
+        etPassword.setDrawableClickListener(new DrawableClickListener() {
+
+
+            public void onClick(DrawablePosition target) {
+                switch (target) {
+                    case RIGHT:
+                        //Do something here
+                        if(!isPasswordVisibleSignUP) {
+                            isPasswordVisibleSignUP=true;
+                            etPassword.setInputType(TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            etPassword.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_password, 0, R.drawable.ic_eye_visible, 0);
+
+                        }
+                        else {
+                            isPasswordVisibleSignUP=false;
+                            etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                            etPassword.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_password, 0, R.drawable.ic_eye, 0);
+
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+        });
+
+
+        etName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+             try {
+                 if (b) {
+                     etName.setBackgroundResource(R.drawable.edit_text_back_enable);
+                     etName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_username_enable, 0, 0, 0);
+
+                 } else {
+                     etName.setBackgroundResource(R.drawable.edit_text_back_disable);
+                     etName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_username, 0, 0, 0);
+
+                 }
+             }
+             catch (Exception e){
+                 e.printStackTrace();
+             }
+            }
+        });
+        etEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+
+                try {
+                    if (b) {
+                        etEmail.setBackgroundResource(R.drawable.edit_text_back_enable);
+                        etEmail.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_email_enable, 0, 0, 0);
+
+                    } else {
+                        etEmail.setBackgroundResource(R.drawable.edit_text_back_disable);
+                        etEmail.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_email, 0, 0, 0);
+
+                    }
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        etPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                try {
+                    if (b) {
+                        etPassword.setBackgroundResource(R.drawable.edit_text_back_enable);
+
+                    } else {
+                        etPassword.setBackgroundResource(R.drawable.edit_text_back_disable);
+
+                    }
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+        });
+        etName.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+
+
+                       validation();
+
+
+
+            }
+        });
+        etEmail.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+
+
+                validation();
+
+
+
+            }
+        });
+        etPassword.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+
+
+                validation();
+
+
+
+            }
+        });
+
+
+    }
+
+    private void initLogin() {
+
+        btnLogin.setEnabled(false);
+        etPasswordLogin.setDrawableClickListener(new DrawableClickListener() {
+
+
+            public void onClick(DrawablePosition target) {
+                switch (target) {
+                    case RIGHT:
+                        //Do something here
+                        if(!isPasswordVisibleLogin) {
+                            isPasswordVisibleLogin=true;
+                            etPasswordLogin.setInputType(TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            etPasswordLogin.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_password, 0, R.drawable.ic_eye_visible, 0);
+
+                        }
+                        else {
+                            isPasswordVisibleLogin=false;
+                            etPasswordLogin.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                            etPasswordLogin.setCompoundDrawablesWithIntrinsicBounds(  R.drawable.ic_password, 0, R.drawable.ic_eye, 0);
+
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+        });
+        etEmailLogin.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+
+               try {
+                   if (b) {
+                       etEmailLogin.setBackgroundResource(R.drawable.edit_text_back_enable);
+                       etEmailLogin.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_email_enable, 0, 0, 0);
+
+                   } else {
+                       etEmailLogin.setBackgroundResource(R.drawable.edit_text_back_disable);
+                       etEmailLogin.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_email, 0, 0, 0);
+
+                   }
+               }
+               catch (Exception e){
+                   e.printStackTrace();
+               }
+            }
+        });
+        etPasswordLogin.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+
+               try {
+                   if (b) {
+                       etPasswordLogin.setBackgroundResource(R.drawable.edit_text_back_enable);
+
+
+                   } else {
+                       etPasswordLogin.setBackgroundResource(R.drawable.edit_text_back_disable);
+
+                   }
+               }
+               catch (Exception e){
+                   e.printStackTrace();
+               }
+            }
+        });
+        etEmailLogin.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+
+
+                validationLogin();
+
+
+
+            }
+        });
+        etPasswordLogin.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+
+
+                validationLogin();
+
+
+
+            }
+        });
+
+
+    }
+
+    void  validationLogin(){
+
+
+            if(Util.isValidMail(etEmailLogin.getText().toString())){
+
+                if(etPasswordLogin.length()>4 && etPasswordLogin.length()<31){
+                    btnLogin.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.bg_button_enable));
+                    btnLogin.setEnabled(true);
+
+                }
+                else {
+                    btnLogin.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.button_disable));
+                    btnLogin.setEnabled(false);
+
+                }
+            }
+            else {
+                btnLogin.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.button_disable));
+                btnLogin.setEnabled(false);
+
+            }
+    }
+    void  validation(){
+        if(etName.getText().length()>2 && etName.length()<31){
+
+            if(Util.isValidMail(etEmail.getText().toString())){
+
+                if(etPassword.length()>4 && etPassword.length()<31){
+                    btnSignUp.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.bg_button_enable));
+                    btnSignUp.setEnabled(true);
+
+                }
+                else {
+
+                    btnSignUp.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.button_disable));
+                    btnSignUp.setEnabled(false);
+
+                }
+            }
+            else {
+
+                btnSignUp.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.button_disable));
+                btnSignUp.setEnabled(false);
+
+            }
+        }
+        else {
+
+            btnSignUp.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.button_disable));
+            btnSignUp.setEnabled(false);
+
+        }
+
+
+    }
+    private void initAnimation(View viewA, View viewB) {
+        Animation animShow = AnimationUtils.loadAnimation(getActivity(), R.anim.view_show);
         viewB.startAnimation(animShow);
        /* Animation  animHide = AnimationUtils.loadAnimation( getActivity(), R.anim.view_hide);
         viewA.setAnimation(animHide);*/
     }
-    private void initAnimationR( View  viewA, View viewB)
-    {
-        Animation animShow = AnimationUtils.loadAnimation( getActivity(), R.anim.view_hide);
+
+    private void initAnimationR(View viewA, View viewB) {
+        Animation animShow = AnimationUtils.loadAnimation(getActivity(), R.anim.view_hide);
         viewB.startAnimation(animShow);
        /* Animation  animHide = AnimationUtils.loadAnimation( getActivity(), R.anim.view_hide);
         viewA.setAnimation(animHide);*/
+    }
+
+
+    @Override
+    public void getResponseSuccess(AuthenticationResponse response) {
+       // Log.e("DEBUG",""+response.toString());
+        if(response.getSuccess()){
+            btnLogin.revertAnimation();
+            if (Util.isNetworkConnectivity(getActivity())) {
+                SharedPreference.getInstance(getActivity()).setBoolean(C.IS_LOGIN,true);
+
+                SharedPreference.getInstance(getActivity()).setUser(C.AUTH_USER,response);
+
+                Intent intent = new Intent(getActivity(), ActivityHome.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                getActivity().startActivity(intent);
+            }
+        }
+    }
+
+    @Override
+    public void getResponseError(String response) {
+        Log.e("DEBUG",""+response);
+        btnLogin.revertAnimation();
+        btnSignUp.revertAnimation();
+        util.setSnackbarMessage(getActivity(),response,LLView,true);
+
+    }
+
+    @Override
+    public void showProgress() {
+
+    }
+
+    @Override
+    public void hideProgress() {
+
     }
 }

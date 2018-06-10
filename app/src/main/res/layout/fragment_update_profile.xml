@@ -1,0 +1,148 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/profile_back"
+    android:layout_height="match_parent"
+    tools:context="com.cheersondemand.view.fragments.FragmentUpdateProfile">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+
+        android:background="@color/white"
+        android:paddingRight="20dp">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp">
+
+
+            <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imgProfile"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerInParent="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/edit_profile_back_default"
+                app:riv_border_color="@color/edit_button_back_color"
+                app:riv_border_width="1dip"
+                app:riv_corner_radius="5dip"
+                app:riv_mutate_background="true"
+                app:riv_oval="false" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/camera"
+                android:tint="@color/profile_text_color" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:layout_marginBottom="30dp"
+
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/sf_ui_display_regular"
+                android:text="@string/name_"
+                android:textColor="@color/profile_updated_text_color"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:fontFamily="@font/sf_ui_display_regular"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/editext_text_color"
+                android:textColorHint="@color/editext_hint_color"
+                android:textCursorDrawable="@drawable/edit_text_cursor_color"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/sf_ui_display_regular"
+                android:text="@string/email"
+                android:textColor="@color/profile_updated_text_color"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/sf_ui_display_regular"
+                android:maxLines="1"
+                android:enabled="false"
+                android:focusable="false"
+                android:singleLine="true"
+                android:textColor="@color/editext_text_color"
+                android:textColorHint="@color/editext_hint_color"
+                android:textCursorDrawable="@drawable/edit_text_cursor_color"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/sf_ui_display_regular"
+                android:text="@string/phone_no"
+                android:textColor="@color/profile_updated_text_color"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/etPhoneNo"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/sf_ui_display_regular"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/editext_text_color"
+                android:textColorHint="@color/editext_hint_color"
+                android:textCursorDrawable="@drawable/edit_text_cursor_color"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/btnSaveProfile"
+
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/bg_button_noborder_disable"
+        android:fontFamily="@font/sf_ui_display_regular"
+        android:text="@string/save_profile"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="13.4sp" />
+
+</RelativeLayout>

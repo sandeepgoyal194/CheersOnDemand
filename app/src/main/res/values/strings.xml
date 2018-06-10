@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CheersOnDemand</string>
+    <string name="app_name">Cheers On Demand</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -7,7 +7,7 @@
     <string name="name">Full Name</string>
     <string name="email">Email</string>
     <string name="cheers_on_demand">Cheers on Demand</string>
-    <string name="get_started">Get started and discover the \n best offers around you</string>
+    <string name="get_started">Get started and discover the \nbest offers around you</string>
     <string name="signup">Sign Up</string>
     <string name="facebook_app_id">227338774698048</string>
     <string name="fb_login_protocol_scheme">fb227338774698048</string>
@@ -23,6 +23,31 @@
     <string name="location">Location</string>
     <string name="select_a_location">Select  a Location</string>
     <string name="add_to_cart">Add to Cart</string>
+    <string name="search_hint">Search for Brand, Type …</string>
+    <string name="edit">Edit</string>
+    <string name="wishList">Wishlist</string>
+    <string name="my_orders">My Orders</string>
+    <string name="saved_add">Saved Addresses</string>
+    <string name="payment_info">Payment Information</string>
+    <string name="conn_acc">Connected Accounts</string>
+    <string name="change_password">Change Password</string>
+    <string name="help_center">Help Center</string>
+    <string name="notification">Notifications</string>
+    <string name="logout">Logout</string>
+    <string name="profile">Profile</string>
+    <string name="sign_in">Sign In</string>
+    <string name="view_orders">View your orders, products, etc.</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="name_">Name</string>
+    <string name="phone_no">Phone  No</string>
+    <string name="save_profile">Save Profile</string>
+    <string name="no_product_found">No Products found</string>
+    <string name="try_search_diff">Try searching with a different terms or browse our categories.</string>
+    <string name="browse_product">Browse Products</string>
+    <string name="products">Products</string>
+    <string name="my_cart">My Cart</string>
+    <string name="add_to_wishlist">Add to wishlist</string>
+    <string name="delete">Remove</string>
     <!--
         <string name="default_web_client_id">999387565226-hdnnhm6rhgik5ljvm06shotsi7j9883c.apps.googleusercontent.com</string>
     -->

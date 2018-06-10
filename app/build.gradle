@@ -1,16 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     defaultConfig {
         applicationId "com.cheersondemand"
-        minSdkVersion 17
-        targetSdkVersion 26
+        minSdkVersion 21
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -22,24 +22,31 @@ android {
 apply plugin: 'com.jakewharton.butterknife'
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-  /*  compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support:support-v13:25.3.1'
-    compile 'com.android.support:design:25.3.1'*/
-/*
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:support-v4:27.1.1'
+    compile 'com.android.support:design:27.1.1'
     compile 'com.google.code.gson:gson:2.4'
-*/
+    compile 'com.jakewharton:butterknife:8.5.1'
+    testImplementation 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
-
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:multidex:1.0.1'
     implementation 'com.facebook.android:facebook-login:[4,5)'
     implementation 'com.google.firebase:firebase-auth:16.0.1'
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
-    implementation project(':framework')
+    compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.mcxiaoke.volley:library-aar:1.0.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.0'
+    implementation 'br.com.simplepass:loading-button-android:1.14.0'
+    compile 'com.makeramen:roundedimageview:2.3.0'
+    compile 'com.github.zcweng:switch-button:0.0.3@aar'
+
+
 }
 apply plugin: 'com.google.gms.google-services'

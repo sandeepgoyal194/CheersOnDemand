@@ -12,7 +12,7 @@ import android.view.MotionEvent;
  * Created by GAURAV on 5/28/2018.
  */
 
-public class CustomEditText extends AppCompatEditText {
+public class CustomEditText extends AppCompatEditText{
 
 
 

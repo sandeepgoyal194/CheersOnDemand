@@ -30,6 +30,7 @@
     </RelativeLayout>
 
         <TextView
+            android:id="@+id/tvBrandName"
             android:text="beers"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"

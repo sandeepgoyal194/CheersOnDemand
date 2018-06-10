@@ -15,7 +15,7 @@ import com.cheersondemand.view.fragments.FragmentSplash;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class    MainActivity extends AppCompatActivity {
     private Bundle bundle;
     private int fragmentAction;
     private Fragment fragment;
@@ -33,30 +33,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void fragmnetLoader(int fragmentType, Bundle bundle) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        try {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        switch (fragmentType) {
-            case C.FRAGMENT_SPLASH:
-                fragment = new FragmentSplash();
-                fragmentTransaction.replace(R.id.container, fragment);
-                fragmentTransaction.addToBackStack(C.TAG_FRAGMENT_SPLASH);
-                break;
-            case C.FRAGMENT_AUTHNITICATION:
-                fragment = new FragmentAuthentication();
-                fragmentTransaction.replace(R.id.container, fragment);
-                //fragmentTransaction.addToBackStack(C.TAG_FRAGMENT_LOGIN);
-                break;
+            switch (fragmentType) {
+                case C.FRAGMENT_SPLASH:
+                    fragment = new FragmentSplash();
+                    fragmentTransaction.replace(R.id.container, fragment);
+                    fragmentTransaction.addToBackStack(C.TAG_FRAGMENT_SPLASH);
+                    break;
+                case C.FRAGMENT_AUTHNITICATION:
+                    fragment = new FragmentAuthentication();
+                    fragmentTransaction.replace(R.id.container, fragment);
+                    //fragmentTransaction.addToBackStack(C.TAG_FRAGMENT_LOGIN);
+                    break;
 
 
-
+            }
+            fragment.setArguments(bundle);
+            fragmentTransaction.commit();
+            getSupportFragmentManager().executePendingTransactions();
 
         }
-        fragment.setArguments(bundle);
-        fragmentTransaction.commit();
-        getSupportFragmentManager().executePendingTransactions();
-
-
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

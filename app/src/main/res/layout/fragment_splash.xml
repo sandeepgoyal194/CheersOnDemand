@@ -2,10 +2,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/splash_screen"
+    android:background="@drawable/splash_back"
     tools:context="com.cheersondemand.view.fragments.FragmentSplash">
 
     <!-- TODO: Update blank fragment layout -->
 
+    <RelativeLayout
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ImageView
+        android:layout_centerHorizontal="true"
+        android:id="@+id/ivSplash"
+        android:layout_width="133dp"
+        android:src="@drawable/splash_icon"
+        android:layout_height="149dp" />
 
+    <TextView
+        android:id="@+id/tvCheers"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/ivSplash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:fontFamily="@font/sf_ui_display_regular"
+        android:text="@string/cheers_on_demand"
+        android:textColor="@color/white"
+        android:textSize="20.2sp" />
+
+    <TextView
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tvCheers"
+        android:layout_width="wrap_content"
+        android:id="@+id/tvStarted"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:fontFamily="@font/sf_ui_display_regular"
+        android:text="@string/get_started"
+        android:textColor="@color/white"
+        android:textSize="14.4sp" />
+    </RelativeLayout>
 </RelativeLayout>
