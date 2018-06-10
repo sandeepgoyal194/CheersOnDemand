@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp" >
+
+    <Switch
+        android:id="@+id/default_switch"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:textOn="ON"
+        android:layout_centerInParent="true"
+        android:textOff="OFF"/>
+    <TextView
+        android:id="@+id/tvStateDefault"
+        android:layout_below="@+id/default_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"/>
+
+    <Switch
+        android:id="@+id/mySwitch"
+        android:layout_below="@+id/tvStateDefault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOn="ON"
+        android:background="@drawable/shadow"
+        android:thumb="@drawable/customswitchselector"
+        android:track="@drawable/custom_track"
+        android:textOff="OFF"
+        android:layout_centerHorizontal="true"/>
+    <TextView
+        android:id="@+id/tvState"
+        android:layout_below="@+id/mySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>
